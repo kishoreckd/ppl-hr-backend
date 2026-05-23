@@ -9,6 +9,20 @@
 
 - `Authorization: Bearer <BEARER_TOKEN>` is required for some endpoints.
 - `User_Token` header is required for chart endpoints that verify JWT access tokens.
+- `Guest_token` header is required for shared chart access when using guest sessions.
+
+## Postman variables
+
+The included Postman collection uses these variables:
+
+- `base_url` — API base URL, e.g. `http://127.0.0.1:5002`
+- `bearer_token` — internal bearer token from `BEARER_TOKEN`
+- `user_token` — JWT access token returned after login or Google auth
+- `share_token` — share token returned after login or Google auth
+- `guest_token` — guest JWT token returned by `/users/check/google`
+- `uid` — chart UID
+- `hashid` — chart node hash ID
+- `parent_hashid` — new parent node hash ID for move operations
 
 ## Users routes
 
