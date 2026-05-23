@@ -1,0 +1,564 @@
+{
+  "info": {
+    "name": "PPL HR Backend",
+    "description": "Postman collection for ppl-hr-backend FastAPI endpoints.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "item": [
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Google Auth",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"<google-oauth-token>\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/auth/google",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "auth",
+                "google"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Google Check",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"<google-oauth-token>\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/check/google",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "check",
+                "google"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Signup",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bearer_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"johndoe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"StrongPassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/signup",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "signup"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bearer_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"StrongPassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bearer_token}}"
+              },
+              {
+                "key": "User_Token",
+                "value": "{{user_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/users/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "profile"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Chart",
+      "item": [
+        {
+          "name": "Get Charts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "User_Token",
+                "value": "{{user_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/chart/?page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "chart"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Chart Node",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "User_Token",
+                "value": "{{user_token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Company",
+                  "type": "text"
+                },
+                {
+                  "key": "node_type",
+                  "value": "department",
+                  "type": "text"
+                },
+                {
+                  "key": "person",
+                  "value": "{\"title\": \"CEO\", \"email\": \"ceo@example.com\"}",
+                  "type": "text"
+                },
+                {
+                  "key": "uid",
+                  "value": "{{uid}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/chart/create",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "chart",
+                "create"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Chart by UID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "User_Token",
+                "value": "{{user_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/chart/get/{{uid}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "chart",
+                "get",
+                "{{uid}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Shared Chart",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "User_Token",
+                "value": "{{share_token}}"
+              },
+              {
+                "key": "Guest_token",
+                "value": "{{guest_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/chart/share/{{uid}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "chart",
+                "share",
+                "{{uid}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Edit Chart Node",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "User_Token",
+                "value": "{{user_token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Updated Department",
+                  "type": "text"
+                },
+                {
+                  "key": "node_type",
+                  "value": "department",
+                  "type": "text"
+                },
+                {
+                  "key": "uid",
+                  "value": "{{uid}}",
+                  "type": "text"
+                },
+                {
+                  "key": "hashid",
+                  "value": "{{hashid}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/chart/edit",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "chart",
+                "edit"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Move Chart Node",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "User_Token",
+                "value": "{{user_token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "uid",
+                  "value": "{{uid}}",
+                  "type": "text"
+                },
+                {
+                  "key": "hashid",
+                  "value": "{{hashid}}",
+                  "type": "text"
+                },
+                {
+                  "key": "parent_hashid",
+                  "value": "{{parent_hashid}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/chart/move_node",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "chart",
+                "move_node"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Chart Node",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "User_Token",
+                "value": "{{user_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/chart/delete/{{uid}}/{{hashid}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "chart",
+                "delete",
+                "{{uid}}",
+                "{{hashid}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Add Static Fields",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "User_Token",
+                "value": "{{user_token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "chart_uid",
+                  "value": "{{uid}}",
+                  "type": "text"
+                },
+                {
+                  "key": "static_fields",
+                  "value": "[{\"name\": \"title\", \"label\": \"Job Title\", \"placeholder\": \"Enter title\", \"type\": \"text\"}]",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/chart/static",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "chart",
+                "static"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Static Fields",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "User_Token",
+                "value": "{{user_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/chart/static/{{uid}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "chart",
+                "static",
+                "{{uid}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Static Field",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "User_Token",
+                "value": "{{user_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/chart/static/{{uid}}/{{hashid}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "chart",
+                "static",
+                "{{uid}}",
+                "{{hashid}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Edit Static Field",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "User_Token",
+                "value": "{{user_token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "static_fields",
+                  "value": "{\"name\": \"title\", \"label\": \"Role\", \"placeholder\": \"Enter role\", \"type\": \"text\"}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/chart/static/{{uid}}/{{hashid}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "chart",
+                "static",
+                "{{uid}}",
+                "{{hashid}}"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "exec": [
+          "// Add any pre-request scripting here if needed"
+        ],
+        "type": "text/javascript"
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:5002"
+    },
+    {
+      "key": "bearer_token",
+      "value": "<BEARER_TOKEN>"
+    },
+    {
+      "key": "user_token",
+      "value": "<USER_TOKEN>"
+    },
+    {
+      "key": "share_token",
+      "value": "<SHARE_TOKEN>"
+    },
+    {
+      "key": "guest_token",
+      "value": "<GUEST_TOKEN>"
+    },
+    {
+      "key": "uid",
+      "value": "<UID>"
+    },
+    {
+      "key": "hashid",
+      "value": "<HASHID>"
+    },
+    {
+      "key": "parent_hashid",
+      "value": "<PARENT_HASHID>"
+    }
+  ]
+}
