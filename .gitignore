@@ -1,0 +1,29 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+
+# PyBuilder
+target/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+
+# VSCode settings folder
+.vscode/
+
+
+# Ignore all __pycache__ folders and their contents inside app directory recursively
+app/**/__pycache__/
+app/**/__pycache__/**
+
+# Ignore .pyc files globally
+*.pyc
