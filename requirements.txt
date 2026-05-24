@@ -1,6 +1,8 @@
 fastapi
 uvicorn
 sqlalchemy
+alembic
+psycopg2-binary
 email-validator
 pymongo==4.9.0
 pydantic
@@ -14,3 +16,6 @@ bcrypt==3.2.0
 google-auth 
 google-auth-oauthlib 
 google-auth-httplib2
+python-multipart
+pytest
+httpx

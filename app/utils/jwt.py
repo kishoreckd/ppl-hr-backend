@@ -30,6 +30,16 @@ def create_access_token(data: dict):
     return access_token, expires_in
 
 
+def create_refresh_token(data: dict):
+    """Create a refresh token with configurable expiration time."""
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(minutes=settings.REFRESH_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expire, "token_type": "refresh"})
+    expires_in = int((expire - datetime.utcnow()).total_seconds())
+    refresh_token = jwt.encode(to_encode, settings.JWT_SECRET, algorithm=settings.JWT_ALGORITHM)
+    return refresh_token, expires_in
+
+
 def create_guest_access_token(data: dict):
     """Create an access token with expiration time.
 

@@ -24,6 +24,7 @@ class Settings(BaseSettings):
 
     # PostgreSQL connection URI (optional; used when migrating to PostgreSQL)
     POSTGRES_URI: str | None = None
+    DATABASE_URL: str | None = None
 
     # PostgreSQL database name
     POSTGRES_DB: str | None = None
@@ -60,6 +61,9 @@ class Settings(BaseSettings):
 
     # Guest token expiration time in minutes (default: 4 hours)
     GUEST_TOKEN_EXPIRE_MINUTES: int = 240
+
+    # Refresh token expiration time in minutes (default: 7 days)
+    REFRESH_TOKEN_EXPIRE_MINUTES: int = 10080
 
     class Config:
         # Path to the .env file from which to load environment variables

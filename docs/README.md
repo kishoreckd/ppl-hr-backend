@@ -11,4 +11,4 @@ This folder contains documentation for the `ppl-hr-backend` FastAPI project.
 
 ## Notes
 
-This backend is currently implemented using MongoDB/Motor for persistence. The `.env` file also includes optional PostgreSQL/Aiven connection settings, but the application code still requires a migration to use PostgreSQL.
+TeamPilot HRMS modules are implemented with PostgreSQL/SQLAlchemy 2.x and Alembic. The original organizational chart feature remains on the existing MongoDB/Motor route layer so the prior chart structure is preserved.

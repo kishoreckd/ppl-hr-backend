@@ -2,40 +2,60 @@
 
 ## Project structure
 
-- `run.py` — application entrypoint using Uvicorn.
-- `app/main.py` — FastAPI app setup and route registration.
-- `app/config.py` — environment settings using Pydantic Settings.
-- `app/database.py` — MongoDB connection wrapper using Motor.
-- `app/routes/` — API routes for users and charts.
-- `app/schema/` — Pydantic request/validation models.
-- `app/models/` — Pydantic data models with MongoDB ObjectId support.
-- `app/services/` — auth helper functions.
-- `app/utils/` — JWT creation and verification.
+- `run.py` - Uvicorn entrypoint.
+- `app/main.py` - FastAPI app setup, CORS, exception handlers, route registration, and seed startup.
+- `app/core/` - SQLAlchemy database setup, JWT/password security, permissions, and response/error helpers.
+- `app/models/hr.py` - TeamPilot SQLAlchemy 2.x models.
+- `app/schema/hr_schema.py` - Pydantic v2 request validation schemas.
+- `app/routes/` - TeamPilot modules plus existing user/chart routes.
+- `app/services/team_pilot.py` - seed data and attendance summary calculation.
+- `alembic/` - PostgreSQL migration environment and initial schema migration.
+- `tests/` - pytest coverage for required Phase 1 workflows.
 
-## Current database implementation
+## Persistence
 
-- The backend currently uses MongoDB for persistence.
-- Database connection is configured in `app/database.py`.
-- `app/routes/user_routes.py` and `app/routes/char_routes.py` access the database via `app.database.get_db()`.
+TeamPilot HRMS modules use PostgreSQL through SQLAlchemy 2.x. The default local fallback is SQLite for lightweight development and tests when `DATABASE_URL`/`POSTGRES_URI` is not set.
 
-### MongoDB collections
+The original organizational chart routes are preserved and continue to use the existing MongoDB/Motor dependency in `app/database.py`.
 
-- `users`
-- `charts`
+## TeamPilot SQL tables
 
-### Data models
+- `team_users`
+- `employee_profiles`
+- `attendance_temp_swipes`
+- `attendance_swipes`
+- `attendance_daily_summaries`
+- `regularization_requests`
+- `leave_policies`
+- `leave_requests`
+- `holidays`
+- `audit_logs`
+- `refresh_tokens`
+- `admin_configurations`
 
-- `ChartModel` — represents organizational chart nodes, including `department` and `employee` types.
-- `UserModel` — current user model for MongoDB documents with `ObjectId` support.
+`audit_logs.metadata`, `employee_profiles.person`, and `admin_configurations.value` use PostgreSQL JSONB with a SQLite JSON fallback for tests.
 
-## Authentication
+## Attendance design
 
-- JWT access tokens are created with `app.utils.jwt.create_access_token`.
-- Share tokens are created with `app.utils.jwt.create_share_token`.
-- Google OAuth verification uses `google.oauth2.id_token`.
-- Additional bearer token protection is enforced by `verify_BEARER_TOKEN` in `app.schema.user_schema.py`.
+- `attendance_temp_swipes` stores current-day live swipe state and is reset lazily when a new day starts.
+- `attendance_swipes` stores every swipe as an immutable permanent history record.
+- `attendance_daily_summaries` is recalculated from permanent swipes.
 
-## Notes on PostgreSQL
+Rules:
 
-- The `.env` file includes optional PostgreSQL/Aiven settings, but the app code has not been migrated to PostgreSQL yet.
-- A full PostgreSQL migration would require rewriting the database layer and MongoDB-specific route logic.
+- First check-in is the first `CHECK_IN` of the day.
+- Last check-out is the last paired `CHECK_OUT` of the day.
+- 8+ hours is `PRESENT`.
+- 4+ hours is `HALF_DAY`.
+- Less than 4 hours is `ABSENT`.
+- Open check-in is `IN_PROGRESS`.
+- Check-in after 09:30 is late.
+- Work above 9 hours is overtime.
+
+## Security
+
+- Passwords are hashed with passlib/bcrypt.
+- JWT access and refresh token expiration are configurable.
+- Protected routes use dependency-injected current user validation.
+- RBAC rules are enforced in `app/core/permissions.py`.
+- Create/update/delete/approval actions write audit logs.

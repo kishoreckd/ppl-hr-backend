@@ -1,0 +1,32 @@
+[project]
+name = "teampilot-backend"
+version = "1.0.0"
+description = "TeamPilot HRMS and org chart backend"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "sqlalchemy",
+    "alembic",
+    "psycopg2-binary",
+    "email-validator",
+    "pymongo==4.9.0",
+    "pydantic",
+    "motor",
+    "python-dotenv",
+    "passlib",
+    "pydantic-settings",
+    "python-jose",
+    "bcrypt==3.2.0",
+    "google-auth",
+    "google-auth-oauthlib",
+    "google-auth-httplib2",
+    "python-multipart",
+]
+
+[project.optional-dependencies]
+test = ["pytest", "httpx"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
