@@ -5,20 +5,20 @@
 - `run.py` - Uvicorn entrypoint.
 - `app/main.py` - FastAPI app setup, CORS, exception handlers, route registration, and seed startup.
 - `app/core/` - SQLAlchemy database setup, JWT/password security, permissions, and response/error helpers.
-- `app/models/hr.py` - TeamPilot SQLAlchemy 2.x models.
+- `app/models/hr.py` - `ppl-hr` SQLAlchemy 2.x models.
 - `app/schema/hr_schema.py` - Pydantic v2 request validation schemas.
-- `app/routes/` - TeamPilot modules plus existing user/chart routes.
+- `app/routes/` - `ppl-hr` modules plus existing user/chart routes.
 - `app/services/team_pilot.py` - seed data and attendance summary calculation.
 - `alembic/` - PostgreSQL migration environment and initial schema migration.
 - `tests/` - pytest coverage for required Phase 1 workflows.
 
 ## Persistence
 
-TeamPilot HRMS modules use PostgreSQL through SQLAlchemy 2.x. The default local fallback is SQLite for lightweight development and tests when `DATABASE_URL`/`POSTGRES_URI` is not set.
+`ppl-hr` modules use PostgreSQL through SQLAlchemy 2.x. The default local fallback is SQLite for lightweight development and tests when `DATABASE_URL`/`POSTGRES_URI` is not set.
 
 The original organizational chart routes are preserved and continue to use the existing MongoDB/Motor dependency in `app/database.py`.
 
-## TeamPilot SQL tables
+## Current `ppl-hr` SQL tables
 
 - `team_users`
 - `employee_profiles`

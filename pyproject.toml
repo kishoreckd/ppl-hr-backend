@@ -1,7 +1,7 @@
 [project]
-name = "teampilot-backend"
+name = "ppl-hr-backend"
 version = "1.0.0"
-description = "TeamPilot HRMS and org chart backend"
+description = "ppl-hr HRMS and org chart backend"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi",

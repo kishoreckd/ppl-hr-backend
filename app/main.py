@@ -18,7 +18,7 @@ from app.routes.regularization_routes import router as regularization_router
 from app.services.team_pilot import seed_team_pilot
 
 # Create FastAPI app instance
-app = FastAPI(title="TeamPilot API", version="1.0.0")
+app = FastAPI(title="ppl-hr API", version="1.0.0")
 
 # Configure CORS middleware to allow cross-origin requests
 app.add_middleware(

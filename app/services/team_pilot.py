@@ -36,7 +36,7 @@ def seed_team_pilot(db: Session):
                 employee_code=code,
                 department="People Operations",
                 designation=role.value,
-                business_unit="TeamPilot",
+                business_unit="ppl-hr",
                 team="Core HR",
                 location="Chennai",
                 shift_name="General",

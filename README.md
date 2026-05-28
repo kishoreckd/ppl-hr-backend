@@ -1,6 +1,6 @@
-# TeamPilot Backend
+# ppl-hr Backend
 
-A FastAPI backend for TeamPilot, an HRMS and workforce operating system. The existing organizational chart module remains available as a feature, while the HRMS modules use PostgreSQL with SQLAlchemy 2.x and Alembic.
+A FastAPI backend for `ppl-hr`, an HRMS and workforce operating system. The existing organizational chart module remains available as a feature, while the HRMS modules use PostgreSQL with SQLAlchemy 2.x and Alembic.
 
 ## Project documentation
 
@@ -10,6 +10,7 @@ See the `docs/` folder for setup instructions, API details, and architecture not
 - `docs/setup.md`
 - `docs/api.md`
 - `docs/architecture.md`
+- `docs/implementation-plan/README.md`
 - `docs/postman_collection.json`
 
 ## Quick start
@@ -41,5 +42,5 @@ python -m pytest -q
 
 ## Notes
 
-- TeamPilot HRMS modules use PostgreSQL/SQLAlchemy models in `app/models/hr.py`.
+- `ppl-hr` modules use PostgreSQL/SQLAlchemy models in `app/models/hr.py`.
 - Org chart routes still use the existing MongoDB structure under `app/routes/char_routes.py`.
