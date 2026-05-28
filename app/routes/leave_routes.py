@@ -34,7 +34,7 @@ def create_leave_request(request: LeaveRequestCreate, db: Session = Depends(get_
     db.flush()
     audit(db, user.id, "create", "LeaveRequest", str(item.id))
     db.commit()
-    return success("Leave request submitted successfully", to_dict(item))
+    return success("Leave request submitted successfully", to_dict(item), status_code=201)
 
 
 @router.get("/requests/my")
@@ -84,7 +84,7 @@ def create_policy(request: LeavePolicyCreate, db: Session = Depends(get_session)
     db.flush()
     audit(db, user.id, "create", "LeavePolicy", str(item.id))
     db.commit()
-    return success("Leave policy created successfully", to_dict(item))
+    return success("Leave policy created successfully", to_dict(item), status_code=201)
 
 
 @router.patch("/policies/{policy_id}")

@@ -46,6 +46,7 @@ def signup(request: SignupRequest, db: Session = Depends(get_session)):
             "expires_in": expires_in,
             "refresh_expires_in": refresh_expires_in,
         },
+        status_code=201,
     )
 
 

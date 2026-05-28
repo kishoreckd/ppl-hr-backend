@@ -4,7 +4,7 @@ from jose import ExpiredSignatureError
 from jose import JWTError
 from app.config import settings
 from fastapi import HTTPException
-from fastapi.responses import JSONResponse
+from app.utils.validator.json_validator import JsonResponse
 
 import secrets
 
@@ -73,14 +73,7 @@ def verify_access_token(token: str):
         JSONResponse: If the token is missing, expired, or invalid.
     """
     if not token:
-        return JSONResponse(
-            status_code=401,
-            content={
-                "status": "error",
-                "message": "User-Token is missing.",
-                "data": {"error": "User-Token is missing."},
-            },
-        )
+        return JsonResponse.error("User-Token is missing.", {"error": "User-Token is missing."}, status_code=401)
 
     try:
         # Decode the token using the secret and algorithm
@@ -94,23 +87,9 @@ def verify_access_token(token: str):
         return payload
 
     except ExpiredSignatureError:
-        return JSONResponse(
-            status_code=401,
-            content={
-                "status": "error",
-                "message": "Access token has expired. Please login again.",
-                "data": {"error": "Access token has expired."},
-            },
-        )
+        return JsonResponse.error("Access token has expired. Please login again.", {"error": "Access token has expired."}, status_code=401)
     except JWTError:
-        return JSONResponse(
-            status_code=401,
-            content={
-                "status": "error",
-                "message": "Invalid token. Please provide a valid access token.",
-                "data": {"error": "Invalid token."},
-            },
-        )
+        return JsonResponse.error("Invalid token. Please provide a valid access token.", {"error": "Invalid token."}, status_code=401)
         
 def create_share_token(data: dict):
     """Create a share token without expiration time.
@@ -129,25 +108,11 @@ def create_share_token(data: dict):
 def verify_share_token(token: str):
     """Verify the share token (without expiration)."""
     if not token:
-        return JSONResponse(
-            status_code=401,
-            content={
-                "status": "error",
-                "message": "Share-Token is missing.",
-                "data": {"error": "Share-Token is missing."},
-            },
-        )
+        return JsonResponse.error("Share-Token is missing.", {"error": "Share-Token is missing."}, status_code=401)
     print(f"{token}")
     try:
         payload = jwt.decode(token, settings.JWT_SECRET, algorithms=[settings.JWT_ALGORITHM])
         return payload  
 
     except JWTError:
-        return JSONResponse(
-            status_code=401,
-            content={
-                "status": "error",
-                "message": "Invalid share token.",
-                "data": {"error": "Invalid share token."},
-            },
-        )
+        return JsonResponse.error("Invalid share token.", {"error": "Invalid share token."}, status_code=401)

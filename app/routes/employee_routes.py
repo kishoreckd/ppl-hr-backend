@@ -93,7 +93,7 @@ def create_employee(request: EmployeeProfileCreate, db: Session = Depends(get_se
     audit(db, actor.id, "create", "EmployeeProfile", str(profile.id))
     db.commit()
     db.refresh(profile)
-    return success("Employee created successfully", employee_payload(profile))
+    return success("Employee created successfully", employee_payload(profile), status_code=201)
 
 
 @router.patch("/{employee_id}")

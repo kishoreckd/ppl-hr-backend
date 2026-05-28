@@ -21,7 +21,7 @@ def create_regularization(request: RegularizationRequestCreate, db: Session = De
     db.flush()
     audit(db, user.id, "create", "RegularizationRequest", str(item.id))
     db.commit()
-    return success("Regularization request submitted successfully", to_dict(item))
+    return success("Regularization request submitted successfully", to_dict(item), status_code=201)
 
 
 @router.get("/my")

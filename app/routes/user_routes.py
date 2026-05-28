@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException, Depends, Header, APIRouter
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse as FastAPIJSONResponse
 from pydantic import BaseModel, ValidationError
 from google.auth.transport.requests import Request
 from google.oauth2 import id_token
@@ -14,11 +14,16 @@ from app.schema.user_schema import (SignupRequest, LoginRequest, verify_BEARER_T
 from app.utils.jwt import verify_access_token, create_access_token,create_share_token,create_guest_access_token
 from bson import ObjectId
 from app.config import settings 
+from app.utils.validator.json_validator import JsonResponse
 
 CLIENT_ID = "1061350659505-e6v1615s1ueb62tfd27jr8jhja0ooqof.apps.googleusercontent.com"
 
 
 router = APIRouter()
+
+
+def JSONResponse(content=None, status_code: int = 200, headers=None):
+    return JsonResponse.from_content(content=content, status_code=status_code, headers=headers)
 
 # Google Login Request Model
 class GoogleLoginRequest(BaseModel):
@@ -296,7 +301,7 @@ async def user_profile(User_Token: str = Header(None), db=Depends(get_db)):
     """
     payload_response = verify_access_token(User_Token)
 
-    if isinstance(payload_response, JSONResponse):
+    if isinstance(payload_response, FastAPIJSONResponse):
         return payload_response
 
     user_id = payload_response.get("id")
@@ -322,6 +327,4 @@ async def user_profile(User_Token: str = Header(None), db=Depends(get_db)):
             },
         }
     )
-
-
 

@@ -42,7 +42,7 @@ def swipe(request: SwipeRequest, db: Session = Depends(get_session), user: User 
     summary = recalculate_attendance_summary(db, profile.id, today)
     audit(db, user.id, "create", "AttendanceSwipe", str(swipe_history.id), {"temp_swipe_id": temp_swipe.id})
     db.commit()
-    return success("Attendance swipe recorded successfully", {"swipe": to_dict(swipe_history), "temp_swipe_id": temp_swipe.id, "summary": to_dict(summary)})
+    return success("Attendance swipe recorded successfully", {"swipe": to_dict(swipe_history), "temp_swipe_id": temp_swipe.id, "summary": to_dict(summary)}, status_code=201)
 
 
 @router.get("/today")

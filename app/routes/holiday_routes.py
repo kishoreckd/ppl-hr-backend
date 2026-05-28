@@ -26,7 +26,7 @@ def create_holiday(request: HolidayCreate, db: Session = Depends(get_session), u
     db.flush()
     audit(db, user.id, "create", "Holiday", str(item.id))
     db.commit()
-    return success("Holiday created successfully", to_dict(item))
+    return success("Holiday created successfully", to_dict(item), status_code=201)
 
 
 @router.post("/import")

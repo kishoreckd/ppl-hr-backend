@@ -3,15 +3,16 @@ from hashlib import sha256
 from platform import node
 from bson import ObjectId  
 from fastapi import APIRouter, Header, Depends, UploadFile , Form , File, UploadFile
-from fastapi.responses import JSONResponse , StreamingResponse
+from fastapi.responses import JSONResponse as FastAPIJSONResponse, StreamingResponse
 from app.database import get_db
 from app.utils.jwt import verify_access_token, verify_share_token
 from app.models.chart import ChartModel
 from app.schema.chart_schema import ChartRequest ,ChartUpdateRequest ,ChartRequestFile
 from bson import ObjectId
-from fastapi.responses import JSONResponse ,FileResponse
+from fastapi.responses import FileResponse
 from typing import  Optional
 from app.schema.user_schema import verify_BEARER_TOKEN
+from app.utils.validator.json_validator import JsonResponse
 import hashlib
 from typing import Optional, Literal
 import base64
@@ -24,6 +25,10 @@ import json
 
 # Initialize the router
 router = APIRouter()
+
+
+def JSONResponse(content=None, status_code: int = 200, headers=None):
+    return JsonResponse.from_content(content=content, status_code=status_code, headers=headers)
 
 
 # ----------------------------------------get all charts----------------------------------------------------------
@@ -98,7 +103,7 @@ async def get_user_charts(
     """
     # Verify the access token
     payload_response = verify_access_token(User_Token)  # Ensure this is awaited
-    if isinstance(payload_response, JSONResponse):
+    if isinstance(payload_response, FastAPIJSONResponse):
         return payload_response
 
     user_id = payload_response.get("id")
@@ -230,7 +235,7 @@ async def create_chart_node(
     """API endpoint to create a node in the chart with support for dynamic nested children and image upload."""
     # Verify access token
     payload_response = verify_access_token(User_Token)
-    if isinstance(payload_response, JSONResponse):
+    if isinstance(payload_response, FastAPIJSONResponse):
         return payload_response
 
     user_id = payload_response.get("id")
@@ -514,7 +519,7 @@ async def delete_chart_node(
     # Verify the access token
     print(f"Verifying access token for User_Token: {User_Token}")
     payload_response = verify_access_token(User_Token)
-    if isinstance(payload_response, JSONResponse):
+    if isinstance(payload_response, FastAPIJSONResponse):
         return payload_response
 
     try:
@@ -630,7 +635,7 @@ async def get_chart_with_counts(
     API endpoint to retrieve the chart details, including employee and department counts for all nodes.
     """
     payload_response = verify_access_token(User_Token)
-    if isinstance(payload_response, JSONResponse):
+    if isinstance(payload_response, FastAPIJSONResponse):
         return payload_response
 
     user_id = payload_response.get("id")
@@ -709,12 +714,12 @@ async def get_chart_with_counts(
     """
     print(f"{Guest_token}") 
     payload_response = verify_access_token(Guest_token)
-    if isinstance(payload_response, JSONResponse):
+    if isinstance(payload_response, FastAPIJSONResponse):
         return payload_response
     
     if User_Token:
         payload_response = verify_share_token(User_Token)
-        if isinstance(payload_response, JSONResponse):
+        if isinstance(payload_response, FastAPIJSONResponse):
             return payload_response
         user_id = None
     else:
@@ -810,7 +815,7 @@ async def edit_chart(
     """
     # Verify the access token
     payload_response = verify_access_token(User_Token)
-    if isinstance(payload_response, JSONResponse):
+    if isinstance(payload_response, FastAPIJSONResponse):
         return payload_response
 
     user_id = payload_response.get("id")
@@ -950,7 +955,7 @@ async def reparent_node(
     """
     # Verify the access token
     payload_response = verify_access_token(User_Token)
-    if isinstance(payload_response, JSONResponse):
+    if isinstance(payload_response, FastAPIJSONResponse):
         return payload_response
 
     user_id = payload_response.get("id")
@@ -1045,7 +1050,7 @@ async def add_static_fields_endpoint(
     """
     # Verify access token
     payload_response = verify_access_token(User_Token)
-    if isinstance(payload_response, JSONResponse):
+    if isinstance(payload_response, FastAPIJSONResponse):
         return payload_response
 
     user_id = payload_response.get("id")
@@ -1138,7 +1143,7 @@ async def delete_static_fields(
     """
     # Verify access token
     payload_response = verify_access_token(User_Token)
-    if isinstance(payload_response, JSONResponse):
+    if isinstance(payload_response, FastAPIJSONResponse):
         return payload_response
 
     user_id = payload_response.get("id")
@@ -1206,7 +1211,7 @@ async def get_static_fields(
     """
     # Verify access token
     payload_response = verify_access_token(User_Token)
-    if isinstance(payload_response, JSONResponse):
+    if isinstance(payload_response, FastAPIJSONResponse):
         return payload_response
 
     user_id = payload_response.get("id")
@@ -1262,7 +1267,7 @@ async def edit_static_field(
     """
     # Verify access token
     payload_response = verify_access_token(User_Token)
-    if isinstance(payload_response, JSONResponse):
+    if isinstance(payload_response, FastAPIJSONResponse):
         return payload_response
 
     user_id = payload_response.get("id")

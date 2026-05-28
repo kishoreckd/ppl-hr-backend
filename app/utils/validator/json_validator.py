@@ -41,6 +41,17 @@ class JsonResponse:
         return cls.create("error", message, data, status_code, headers=headers)
 
     @classmethod
+    def from_content(cls, content: dict | None = None, status_code: int = 200, headers=None) -> JSONResponse:
+        content = content or {}
+        status = content.get("status") or ("success" if status_code < 400 else "error")
+        message = content.get("message") or ("Success" if status == "success" else "Error")
+        if "data" in content:
+            data = content["data"]
+        else:
+            data = {key: value for key, value in content.items() if key not in {"status", "message"}}
+        return cls.create(status, message, data, status_code, headers=headers)
+
+    @classmethod
     def validation_error(cls, ve: ValidationError, status_code: int = 422, headers=None) -> JSONResponse:
         errors = []
         for err in ve.errors():
