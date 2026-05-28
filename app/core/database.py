@@ -19,7 +19,7 @@ def build_database_url() -> str:
         port = settings.POSTGRES_PORT or 5432
         ssl = f"?sslmode={settings.PGSSLMODE}" if settings.PGSSLMODE else ""
         return f"postgresql+psycopg2://{settings.POSTGRES_USER}:{password}@{settings.POSTGRES_HOST}:{port}/{settings.POSTGRES_DB}{ssl}"
-    return "sqlite:///./teampilot.db"
+    return "sqlite:///./ppl_hr.db"
 
 
 class Base(DeclarativeBase):

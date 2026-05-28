@@ -1,6 +1,6 @@
-"""initial teampilot schema
+"""initial ppl-hr schema
 
-Revision ID: 0001_initial_teampilot
+Revision ID: 0001_initial_ppl_hr
 Revises:
 Create Date: 2026-05-24
 """
@@ -8,12 +8,12 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
-revision = "0001_initial_teampilot"
+revision = "0001_initial_ppl_hr"
 down_revision = None
 branch_labels = None
 depends_on = None
 
-role_enum = sa.Enum("Employee", "Manager", "Admin", name="roleenum")
+role_enum = sa.Enum("Employee", "Manager", "HR", "Recruiter", "Admin", name="roleenum")
 swipe_enum = sa.Enum("CHECK_IN", "CHECK_OUT", name="swipetypeenum")
 attendance_status_enum = sa.Enum(
     "PRESENT",

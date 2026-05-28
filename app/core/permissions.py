@@ -6,7 +6,33 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_session
 from app.core.security import decode_token
-from app.models.hr import AuditLog, EmployeeProfile, RoleEnum, User
+from app.models.hr import AccessRole, AuditLog, EmployeeProfile, Permission, PermissionEffectEnum, RoleEnum, RolePermission, User, UserRoleOverride
+
+
+PERMISSION_KEYS = {
+    "admin.config.read",
+    "admin.config.write",
+    "admin.permissions.read",
+    "audit.read",
+    "employees.read_self",
+    "employees.read_team",
+    "employees.read_all",
+    "employees.write",
+    "attendance.read_self",
+    "attendance.read_team",
+    "attendance.write_self",
+    "attendance.regularization.review",
+    "leave.read_self",
+    "leave.read_team",
+    "leave.write_self",
+    "leave.policies.write",
+    "leave.requests.review",
+    "holidays.read",
+    "holidays.write",
+    "imports.write",
+    "exports.read",
+    "notifications.read",
+}
 
 
 def to_dict(obj):
@@ -49,6 +75,46 @@ def current_user(authorization: str = Header(None), db: Session = Depends(get_se
 def require_roles(*roles: RoleEnum):
     def dependency(user: User = Depends(current_user)) -> User:
         if user.role not in roles:
+            raise HTTPException(status_code=403, detail="Insufficient permissions")
+        return user
+
+    return dependency
+
+
+def has_permission(db: Session, user: User, permission_key: str) -> bool:
+    if user.role == RoleEnum.Admin:
+        return True
+
+    permission = db.scalar(select(Permission).where(Permission.key == permission_key))
+    if not permission:
+        return False
+
+    override = db.scalar(
+        select(UserRoleOverride).where(
+            UserRoleOverride.user_id == user.id,
+            UserRoleOverride.permission_id == permission.id,
+        )
+    )
+    if override:
+        return override.effect == PermissionEffectEnum.ALLOW
+
+    role = db.scalar(select(AccessRole).where(AccessRole.name == user.role.value))
+    if not role:
+        return False
+    return (
+        db.scalar(
+            select(RolePermission.permission_id).where(
+                RolePermission.role_id == role.id,
+                RolePermission.permission_id == permission.id,
+            )
+        )
+        is not None
+    )
+
+
+def require_permission(permission_key: str):
+    def dependency(user: User = Depends(current_user), db: Session = Depends(get_session)) -> User:
+        if not has_permission(db, user, permission_key):
             raise HTTPException(status_code=403, detail="Insufficient permissions")
         return user
 

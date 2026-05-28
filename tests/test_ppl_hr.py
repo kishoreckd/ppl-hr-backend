@@ -9,7 +9,7 @@ os.environ.setdefault("DB_NAME", "test")
 os.environ.setdefault("DOMAIN_URL", "http://testserver")
 os.environ.setdefault("GOOGLE_CLIENT_ID", "test")
 os.environ.setdefault("GOOGLE_CLIENT_SECRET", "test")
-os.environ["DATABASE_URL"] = "sqlite:///./test_teampilot.db"
+os.environ["DATABASE_URL"] = "sqlite:///./test_ppl_hr.db"
 os.environ["POSTGRES_URI"] = ""
 
 from fastapi.testclient import TestClient
@@ -17,12 +17,14 @@ from sqlalchemy import select
 
 from app.core.database import Base, SessionLocal, engine
 from app.main import app
-from app.models.hr import AttendanceDailySummary, AttendanceSwipe, EmployeeProfile, SwipeTypeEnum
-from app.services.team_pilot import recalculate_attendance_summary
+from app.core.notifications import queue_notification
+from app.core.permissions import has_permission
+from app.models.hr import AccessRole, AttendanceDailySummary, AttendanceSwipe, EmployeeProfile, NotificationEvent, Permission, SwipeTypeEnum, User
+from app.services.ppl_hr import recalculate_attendance_summary
 
 
 def setup_module():
-    db_path = Path("test_teampilot.db")
+    db_path = Path("test_ppl_hr.db")
     if db_path.exists():
         db_path.unlink()
     Base.metadata.create_all(bind=engine)
@@ -121,3 +123,45 @@ def test_admin_leave_policy_creation_and_holiday_import():
     assert response.status_code == 200, response.text
     assert response.json()["data"]["imported_count"] == 1
     assert len(response.json()["data"]["failed_rows"]) == 1
+
+
+def test_phase1_roles_permissions_are_seeded_and_exposed():
+    admin_token = login("Admin@cxontology.com", "Admin@123")
+    response = client.get("/admin/roles", headers=headers(admin_token))
+    assert response.status_code == 200, response.text
+    role_names = {role["name"] for role in response.json()["data"]}
+    assert {"Employee", "Manager", "HR", "Recruiter", "Admin"}.issubset(role_names)
+
+    permissions = client.get("/admin/permissions", headers=headers(admin_token))
+    assert permissions.status_code == 200, permissions.text
+    permission_keys = {item["key"] for item in permissions.json()["data"]}
+    assert {"admin.permissions.read", "employees.read_all", "notifications.read"}.issubset(permission_keys)
+
+
+def test_phase1_permission_helper_and_notification_queue():
+    db = SessionLocal()
+    try:
+        employee = db.scalar(select(User).where(User.email == "employee@cxontology.com"))
+        admin = db.scalar(select(User).where(User.email == "admin@cxontology.com"))
+        assert db.scalar(select(AccessRole).where(AccessRole.name == "HR")) is not None
+        assert db.scalar(select(Permission).where(Permission.key == "employees.read_all")) is not None
+        assert has_permission(db, employee, "employees.read_self") is True
+        assert has_permission(db, employee, "employees.write") is False
+        assert has_permission(db, admin, "employees.write") is True
+
+        event = queue_notification(
+            db,
+            event_key="phase1.test",
+            module="tests",
+            actor_id=admin.id,
+            recipient_id=employee.id,
+            entity_type="User",
+            entity_id=str(employee.id),
+            payload={"ok": True},
+        )
+        db.commit()
+        stored = db.get(NotificationEvent, event.id)
+        assert stored.status.value == "QUEUED"
+        assert stored.payload == {"ok": True}
+    finally:
+        db.close()

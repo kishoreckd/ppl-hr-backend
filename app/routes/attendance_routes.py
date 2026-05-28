@@ -9,7 +9,7 @@ from app.core.exceptions import success
 from app.core.permissions import audit, can_access_employee, current_user, direct_report_ids, get_profile, to_dict
 from app.models.hr import AttendanceDailySummary, AttendanceStatusEnum, AttendanceSwipe, AttendanceTempSwipe, EmployeeProfile, RoleEnum, SwipeTypeEnum, User
 from app.schema.hr_schema import SwipeRequest
-from app.services.team_pilot import recalculate_attendance_summary
+from app.services.ppl_hr import recalculate_attendance_summary
 
 router = APIRouter()
 

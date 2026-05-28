@@ -56,6 +56,8 @@ Seed data is created on startup if the users do not already exist.
 | --- | --- | --- |
 | Admin | `Admin@cxontology.com` | `Admin@123` |
 | Manager | `manager@cxontology.com` | `Manager@123` |
+| HR | `hr@cxontology.com` | `Hr@12345` |
+| Recruiter | `recruiter@cxontology.com` | `Recruiter@123` |
 | Employee | `employee@cxontology.com` | `Employee@123` |
 
 ## ppl-hr module endpoints

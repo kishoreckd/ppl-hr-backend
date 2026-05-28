@@ -15,7 +15,7 @@ from app.routes.char_routes import router as chart_router
 from app.routes.holiday_routes import router as holiday_router
 from app.routes.leave_routes import router as leave_router
 from app.routes.regularization_routes import router as regularization_router
-from app.services.team_pilot import seed_team_pilot
+from app.services.ppl_hr import seed_ppl_hr
 
 # Create FastAPI app instance
 app = FastAPI(title="ppl-hr API", version="1.0.0")
@@ -52,6 +52,6 @@ def startup_seed_data():
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     try:
-        seed_team_pilot(db)
+        seed_ppl_hr(db)
     finally:
         db.close()

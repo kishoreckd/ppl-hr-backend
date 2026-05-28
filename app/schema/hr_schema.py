@@ -8,6 +8,8 @@ from pydantic import BaseModel, EmailStr, Field, field_validator, model_validato
 class Role(str, Enum):
     EMPLOYEE = "Employee"
     MANAGER = "Manager"
+    HR = "HR"
+    RECRUITER = "Recruiter"
     ADMIN = "Admin"
 
 

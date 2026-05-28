@@ -8,7 +8,7 @@
 - `app/models/hr.py` - `ppl-hr` SQLAlchemy 2.x models.
 - `app/schema/hr_schema.py` - Pydantic v2 request validation schemas.
 - `app/routes/` - `ppl-hr` modules plus existing user/chart routes.
-- `app/services/team_pilot.py` - seed data and attendance summary calculation.
+- `app/services/ppl_hr.py` - seed data and attendance summary calculation.
 - `alembic/` - PostgreSQL migration environment and initial schema migration.
 - `tests/` - pytest coverage for required Phase 1 workflows.
 

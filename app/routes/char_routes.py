@@ -205,7 +205,8 @@ async def save_image(file: UploadFile, uid: str, hashid: str, name: str) -> str:
     if not os.path.exists(user_folder):
         os.makedirs(user_folder)
 
-    image_filename = f"{hashid}{name}{os.path.splitext(file.filename)[-1]}.enc"
+    original_filename = file.filename or ""
+    image_filename = f"{hashid}{name}{os.path.splitext(original_filename)[-1]}.enc"
     # image_filename = f"{hashid}_{name}.enc"
     file_path = os.path.join(user_folder, image_filename)
     img_content = await file.read()

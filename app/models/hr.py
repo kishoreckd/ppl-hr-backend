@@ -14,7 +14,21 @@ JsonType = JSONB().with_variant(JSON(), "sqlite")
 class RoleEnum(str, enum.Enum):
     Employee = "Employee"
     Manager = "Manager"
+    HR = "HR"
+    Recruiter = "Recruiter"
     Admin = "Admin"
+
+
+class PermissionEffectEnum(str, enum.Enum):
+    ALLOW = "ALLOW"
+    DENY = "DENY"
+
+
+class NotificationStatusEnum(str, enum.Enum):
+    QUEUED = "QUEUED"
+    SENT = "SENT"
+    FAILED = "FAILED"
+    SKIPPED = "SKIPPED"
 
 
 class SwipeTypeEnum(str, enum.Enum):
@@ -52,6 +66,47 @@ class User(Base):
     updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
 
     employee_profile: Mapped["EmployeeProfile"] = relationship(back_populates="user", uselist=False)
+
+
+class AccessRole(Base):
+    __tablename__ = "roles"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(80), unique=True, nullable=False, index=True)
+    description: Mapped[str | None] = mapped_column(Text)
+    is_system: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
+
+
+class Permission(Base):
+    __tablename__ = "permissions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    key: Mapped[str] = mapped_column(String(120), unique=True, nullable=False, index=True)
+    module: Mapped[str] = mapped_column(String(80), nullable=False, index=True)
+    description: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
+
+
+class RolePermission(Base):
+    __tablename__ = "role_permissions"
+
+    role_id: Mapped[int] = mapped_column(ForeignKey("roles.id"), primary_key=True)
+    permission_id: Mapped[int] = mapped_column(ForeignKey("permissions.id"), primary_key=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
+
+
+class UserRoleOverride(Base):
+    __tablename__ = "user_role_overrides"
+    __table_args__ = (UniqueConstraint("user_id", "permission_id", name="uq_user_permission_override"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("team_users.id"), nullable=False, index=True)
+    permission_id: Mapped[int] = mapped_column(ForeignKey("permissions.id"), nullable=False, index=True)
+    effect: Mapped[PermissionEffectEnum] = mapped_column(Enum(PermissionEffectEnum), nullable=False)
+    created_by: Mapped[int] = mapped_column(ForeignKey("team_users.id"), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
 
 
 class EmployeeProfile(Base):
@@ -217,3 +272,18 @@ class AdminConfig(Base):
     value: Mapped[dict] = mapped_column(JsonType, default=dict, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
+
+
+class NotificationEvent(Base):
+    __tablename__ = "notification_events"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    event_key: Mapped[str] = mapped_column(String(120), nullable=False, index=True)
+    module: Mapped[str] = mapped_column(String(80), nullable=False, index=True)
+    actor_id: Mapped[int | None] = mapped_column(ForeignKey("team_users.id"))
+    recipient_id: Mapped[int | None] = mapped_column(ForeignKey("team_users.id"), index=True)
+    entity_type: Mapped[str | None] = mapped_column(String(80))
+    entity_id: Mapped[str | None] = mapped_column(String(80))
+    payload: Mapped[dict] = mapped_column(JsonType, default=dict, nullable=False)
+    status: Mapped[NotificationStatusEnum] = mapped_column(Enum(NotificationStatusEnum), default=NotificationStatusEnum.QUEUED, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)

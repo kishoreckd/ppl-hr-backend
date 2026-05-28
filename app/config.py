@@ -65,6 +65,9 @@ class Settings(BaseSettings):
     # Refresh token expiration time in minutes (default: 7 days)
     REFRESH_TOKEN_EXPIRE_MINUTES: int = 10080
 
+    # Local root used by import/export and attachment storage abstractions
+    UPLOAD_STORAGE_DIR: str = "storage"
+
     class Config:
         # Path to the .env file from which to load environment variables
         env_file = ".env"
